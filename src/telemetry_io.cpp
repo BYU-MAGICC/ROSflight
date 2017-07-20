@@ -157,6 +157,22 @@ void telemetryIO::handle_mavlink_message(const mavlink_message_t &msg)
     case MAVLINK_MSG_ID_telemetry_VERSION:
       handle_version_msg(msg);
       break;
+
+    // begin jesse insertions
+
+    // i think this is how these should be added?
+    case MAVLINK_MSG_ID_MAV_STATE_SMALL:
+      handle_mav_state_small_msg(msg);
+      break;
+    case MAVLINK_MSG_ID_MAV_CURRENT_PATH:
+      handle_mav_current_path_msg(msg);
+      break;
+    case MAVLINK_MSG_ID_MAV_WAYPOINT:
+      handle_mav_waypoint_msg(msg);
+      break;
+
+    //end jesse insertions
+
     case MAVLINK_MSG_ID_PARAM_VALUE:
     case MAVLINK_MSG_ID_TIMESYNC:
       // silently ignore (handled elsewhere)
@@ -655,6 +671,128 @@ void telemetryIO::handle_version_msg(const mavlink_message_t &msg)
 
   ROS_INFO("Firmware version: %s", version.version);
 }
+
+// begin jesse insertions
+
+void telemetryIO::handle_mav_state_small_msg(const mavlink_message_t &msg)
+{
+  mavlink_msg_mav_state_small_t state;
+  mavlink_msg_mav_state_small_decode(&msg, &state);
+
+  // fill out the ROS State message
+  rosplane_msgs::State state_msg;
+  state_msg.header.stamp = ros::Time::now();
+  state_msg.position[0] = state.position[0];
+  state_msg.position[1] = state.position[1];
+  state_msg.position[2] = state.position[2];
+  state_msg.Va = state.Va;
+  state_msg.alpha = 0.0;
+  state_msg.beta = 0.0;
+  state_msg.phi = state.phi;
+  state_msg.theta = state.theta;
+  state_msg.psi = state.psi;
+  state_msg.chi = state.chi;
+  state_msg.p = 0.0;
+  state_msg.q = 0.0;
+  state_msg.r = 0.0;
+  state_msg.Vg = 0.0;
+  state_msg.wn = 0.0;
+  state_msg.we = 0.0;
+  state_msg.quat[0] = 0.0;  // x
+  state_msg.quat[1] = 0.0;  // y
+  state_msg.quat[2] = 0.0;  // z
+  state_msg.quat[3] = 1.0;  // w
+  state_msg.quat_valid = false;
+  state_msg.chi_deg = 0.0;
+  state_msg.psi_deg = 0.0;
+  state_msg.initial_lat = state.initial_lat;
+  state_msg.initial_lon = state.initial_lon;
+  state_msg.initial_alt = state.initial_alt;
+
+  // publish the message
+  if (mav_state_pub_.getTopic().empty())
+  {
+    mav_state_pub_ = nh_.advertise<rosplane_msgs::State>("state", 1);
+  }
+  mav_state_pub_.publish(state_msg);
+}
+
+void telemetryIO::handle_mav_current_path_msg(const mavlink_message_t &msg)
+{
+  mavlink_msg_mav_current_path_t current_path;
+  mavlink_msg_mav_current_path_decode(&msg, &current_path);
+
+  // fill out the ROS Current_Path message
+  rosplane_msgs::Current_Path current_path_msg;
+  current_path_msg.header.stamp = ros::Time::now();
+  if (current_path.flag == 1)
+  {
+    current_path_msg.flag = true;
+  }
+  else
+  {
+    current_path_msg.flag = false;
+  }
+  current_path_msg.Va_d = current_path.Va_d
+  current_path_msg.r[0] = current_path.r[0]
+  current_path_msg.r[1] = current_path.r[1]
+  current_path_msg.r[2] = current_path.r[2]
+  current_path_msg.q[0] = current_path.q[0]
+  current_path_msg.q[1] = current_path.q[1]
+  current_path_msg.q[2] = current_path.q[2]
+  current_path_msg.c[0] = current_path.c[0]
+  current_path_msg.c[1] = current_path.c[1]
+  current_path_msg.c[2] = current_path.c[2]
+  current_path_msg.rho = current_path.rho
+  current_path_msg.lambda = current_path.lambda
+
+  // publish the message
+  if (mav_current_path_pub_.getTopic().empty())
+  {
+    mav_current_path_pub_ = nh_.advertise<rosplane_msgs::Current_Path>("current_path", 1);
+  }
+  mav_current_path_pub_.publish(current_path_msg);
+}
+
+void telemetryIO::handle_mav_waypoint_msg(const mavlink_message_t &msg)
+{
+  mavlink_msg_mav_waypoint_t waypoint;
+  mavlink_msg_mav_waypoint_decode(&msg, &waypoint);
+
+  // fill out the ROS Waypoint message
+  rosplane_msgs::Waypoint waypoint_msg;
+  waypoint_msg.header.stamp = ros::Time::now();
+  waypoint_msg.w[0] = waypoint[0];
+  waypoint_msg.w[1] = waypoint[1];
+  waypoint_msg.w[2] = waypoint[2];
+  waypoint_msg.chi_d = Waypoint.chi_d;
+  if (waypoint.chi_valid == 1)
+  {
+     waypoint_msg.chi_valid = true;
+  }
+  else
+  {
+    waypoint_msg.chi_valid = false;
+  }
+  waypoint_msg.Va_d = waypoint.Va_d
+  if (waypoint.set_current == 1)
+  {
+     waypoint_msg.set_current = true;
+  }
+  else
+  {
+    waypoint_msg.set_current = false;
+  }
+
+  // publish the message
+  if (mav_waypoint_pub_.getTopic().empty())
+  {
+    mav_waypoint_pub_ = nh_.advertise<rosplane_msgs::Waypoint>("waypoint", 1);
+  }
+  mav_current_path_pub_.publish(waypoint_msg);
+}
+
+// end jesse insertions
 
 void telemetryIO::commandCallback(rosflight_msgs::Command::ConstPtr msg)
 {

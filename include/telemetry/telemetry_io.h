@@ -71,6 +71,13 @@
 #include <telemetry/mavtelemetry/mavlink_listener_interface.h>
 #include <telemetry/mavtelemetry/param_listener_interface.h>
 
+// begin jesse insertions
+// for these includes we need to add rosplane as a dependency in CMakelists.txt
+#include <rosplane_msgs/State.h>
+#include <rosplane_msgs/Current_Path.h>
+#include <rosplane_msgs/Waypoint.h>
+// end jesse insertions
+
 #include <geometry_msgs/Quaternion.h>
 
 namespace telemetry_io
@@ -109,6 +116,12 @@ private:
   void handle_named_command_struct_msg(const mavlink_message_t &msg);
   void handle_small_sonar(const mavlink_message_t &msg);
   void handle_version_msg(const mavlink_message_t &msg);
+
+  // begin jesse insertions
+  void handle_mav_state_small_msg(const mavlink_message_t &msg);
+  void handle_mav_current_path_msg(const mavlink_message_t &msg);
+  void handle_mav_waypoint_msg(const mavlink_message_t &msg);
+  // end jesse insertions
 
   // ROS message callbacks
   void commandCallback(rosflight_msgs::Command::ConstPtr msg);
@@ -156,6 +169,15 @@ private:
   ros::Publisher euler_pub_;
   ros::Publisher status_pub_;
   ros::Publisher version_pub_;
+
+  // begin jesse insertions
+
+  ros::Publisher mav_state_pub_;
+  ros::Publisher mav_current_path_pub_;
+  ros::Publisher mav_waypoint_pub_;
+
+  // end jesse insertions
+
   std::map<std::string, ros::Publisher> named_value_int_pubs_;
   std::map<std::string, ros::Publisher> named_value_float_pubs_;
   std::map<std::string, ros::Publisher> named_command_struct_pubs_;
