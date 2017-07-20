@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<mavlink>
+    <include>rosflight.xml</include>
+    <enums>
+        <!-- Should we have any of these? -->
+        <enum>
+            <!-- some enum here -->
+        </enum>
+    </enums>
+    <messages>
+        <!-- abreviated State message for Mavlink -->
+        <message id="200" name="MAV_STATE_SMALL">
+            <field type="float[3]" name="position">NED position (m)</field>
+            <field type="float" name="Va">Airspeed (m/s)</field>
+            <field type="float" name="phi">Roll angle (rad)</field>
+            <field type="float" name="theta">Pitch angle (rad)</field>
+            <field type="float" name="psi">Yaw angle (rad)</field>
+            <field type="float" name="chi">Course angle (rad)</field>
+            <field type="float" name="initial_lat">Initial/origin latitude (lat. deg)</field>
+            <field type="float" name="initial_lon">Initial/origin longitude (lon. deg)</field>
+            <field type="float" name="initial_alt">Initial/origin altitude (m)</field>
+        </message>
+
+        <!-- MAV Current Path message for Mavlink -->
+        <message id="201" name="MAV_CURRENT_PATH">
+            <field type="uint8_t" name="flag">Indicates strait line or orbital path (1 = line, 0 = orbit)</field>
+            <field type="float" name="Va_d">Desired airspeed (m/s)</field>
+            <field type="float[3]" name="r">Vector to origin of straight line path (m)</field>
+            <field type="float[3]" name="q">Unit vector, desired direction of travel for line path</field>
+            <field type="float[3]" name="c">Center of orbital path (m)</field>
+            <field type="float" name="rho">Radius of orbital path (m)</field>
+            <field type="int8_t" name="lambda">Direction of orbital path (clockwise is 1, counterclockwise is -1)</field>
+        </message>
+
+        <!-- MAV  Waypoint message for Mavlink-->
+        <message id="202" name="MAV_WAYPOINT">
+            <field type="float[3]" name="w">Waypoint in local NED (m)</field>
+            <field type="float" name="chi_d">Desired course at this waypoint (rad)</field>
+            <field type="uint8_t" name="chi_valid">Desired course valid (1 = valid, 0 = !valid)</field>
+            <field type="float" name="Va_d">Desired airspeed (m/s)</field>
+            <field type="uint8_t" name="set_current">Sets this waypoint to be executed now (1 = true, 0 = false)</field>
+        </message>
+    </messages>
+</mavlink>
