@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<mavlink>
+    <include>common.xml</include>
+    <enums>
+        <!-- telemetry specific MAV_CMD_* commands -->
+        <enum name="ROSFLIGHT_CMD">
+            <entry value="0" name="ROSFLIGHT_CMD_RC_CALIBRATION"/>
+            <entry value="1" name="ROSFLIGHT_CMD_ACCEL_CALIBRATION"/>
+            <entry value="2" name="ROSFLIGHT_CMD_GYRO_CALIBRATION"/>
+            <entry value="3" name="ROSFLIGHT_CMD_BARO_CALIBRATION"/>
+            <entry value="4" name="ROSFLIGHT_CMD_AIRSPEED_CALIBRATION"/>
+            <entry value="5" name="ROSFLIGHT_CMD_READ_PARAMS"/>
+            <entry value="6" name="ROSFLIGHT_CMD_WRITE_PARAMS"/>
+            <entry value="7" name="ROSFLIGHT_CMD_SET_PARAM_DEFAULTS"/>
+            <entry value="8" name="ROSFLIGHT_CMD_REBOOT"/>
+            <entry value="9" name="ROSFLIGHT_CMD_REBOOT_TO_BOOTLOADER"/>
+            <entry value="10" name="ROSFLIGHT_CMD_SEND_VERSION"/>
+        </enum>
+        <enum name="ROSFLIGHT_CMD_RESPONSE">
+            <entry value="0" name="ROSFLIGHT_CMD_FAILED"/>
+            <entry value="1" name="ROSFLIGHT_CMD_SUCCESS"/>
+        </enum>
+        <enum name="OFFBOARD_CONTROL_MODE">
+            <entry value="0" name="MODE_PASS_THROUGH">
+                <description>Pass commanded values directly to actuators</description>
+            </entry>
+            <entry value="1" name="MODE_ROLLRATE_PITCHRATE_YAWRATE_THROTTLE">
+                <description>Command roll rate, pitch rate, yaw rate, and throttle</description>
+            </entry>
+            <entry value="2" name="MODE_ROLL_PITCH_YAWRATE_THROTTLE">
+                <description>Command roll angle, pitch angle, yaw rate, and throttle</description>
+            </entry>
+            <entry value="3" name="MODE_ROLL_PITCH_YAWRATE_ALTITUDE">
+                <description>Command roll angle, pitch angle, yaw rate, and altitude above ground</description>
+            </entry>
+        </enum>
+        <enum name="OFFBOARD_CONTROL_IGNORE">
+            <entry value="0x00" name="IGNORE_NONE">
+                <description>Convenience value for specifying no fields should be ignored</description>
+            </entry>
+            <entry value="0x01" name="IGNORE_VALUE1">
+                <description>Field value1 should be ignored</description>
+            </entry>
+            <entry value="0x02" name="IGNORE_VALUE2">
+                <description>Field value2 should be ignored</description>
+            </entry>
+            <entry value="0x04" name="IGNORE_VALUE3">
+                <description>Field value3 should be ignored</description>
+            </entry>
+            <entry value="0x08" name="IGNORE_VALUE4">
+                <description>Field value4 should be ignored</description>
+            </entry>
+        </enum>
+        <enum name="ROSFLIGHT_ERROR_CODE">
+          <entry value="0x00" name="ROSFLIGHT_ERROR_NONE"/>
+          <entry value="0x01" name="ROSFLIGHT_ERROR_INVALID_MIXER"/>
+          <entry value="0x02" name="ROSFLIGHT_ERROR_IMU_NOT_RESPONDING"/>
+          <entry value="0x04" name="ROSFLIGHT_ERROR_RC_LOST"/>
+          <entry value="0x08" name="ROSFLIGHT_ERROR_UNHEALTHY_ESTIMATOR"/>
+          <entry value="0x10" name="ROSFLIGHT_ERROR_TIME_GOING_BACKWARDS"/>
+          <entry value="0x20" name="ROSFLIGHT_ERROR_UNCALIBRATED_IMU"/>
+        </enum>
+        <enum name="ROSFLIGHT_RANGE_TYPE">
+          <entry value="0" name="ROSFLIGHT_RANGE_SONAR"/>
+          <entry value="1" name="ROSFLIGHT_RANGE_LIDAR"/>
+        </enum>
+    </enums>
+    <messages>
+        <message id="180" name="OFFBOARD_CONTROL">
+            <field type="uint8_t" name="mode" enum="OFFBOARD_CONTROL_MODE">Offboard control mode, see OFFBOARD_CONTROL_MODE</field>
+            <field type="uint8_t" name="ignore" enum="OFFBOARD_CONTROL_IGNORE">Bitfield specifying which fields should be ignored, see OFFBOARD_CONTROL_IGNORE</field>
+            <field type="float" name="x">x control channel interpreted according to mode</field>
+            <field type="float" name="y">y control channel, interpreted according to mode</field>
+            <field type="float" name="z">z control channel, interpreted according to mode</field>
+            <field type="float" name="F">F control channel, interpreted according to mode</field>
+        </message>
+        <message id="181" name="SMALL_IMU">
+            <field type="uint64_t" name="time_boot_us">Measurement timestamp as microseconds since boot</field>
+            <field type="float" name="xacc">Acceleration along X axis</field>
+            <field type="float" name="yacc">Acceleration along Y axis</field>
+            <field type="float" name="zacc">Acceleration along Z axis</field>
+            <field type="float" name="xgyro">Angular speed around X axis</field>
+            <field type="float" name="ygyro">Angular speed around Y axis</field>
+            <field type="float" name="zgyro">Angular speed around Z axis</field>
+            <field type="float" name="temperature">Internal temperature measurement</field>
+        </message>
+        <message id="182" name="SMALL_MAG">
+            <field type="float" name="xmag">Magnetic field along X axis</field>
+            <field type="float" name="ymag">Magnetic field along Y axis</field>
+            <field type="float" name="zmag">Magnetic field along Z axis</field>
+        </message>
+        <message id="183" name="SMALL_BARO">
+          <field type="float" name="altitude">Calculated Altitude (m)</field>
+          <field type="float" name="pressure">Measured Differential Pressure (Pa)</field>
+          <field type="float" name="temperature">Measured Temperature (K)</field>
+        </message>
+        <message id="184" name="DIFF_PRESSURE">
+          <field type="float" name="velocity">Measured Velocity</field>
+          <field type="float" name="diff_pressure">Measured Differential Pressure (Pa)</field>
+          <field type="float" name="temperature">Measured Temperature (K)</field>
+        </message>
+        <message id="185" name="CAMERA_STAMPED_SMALL_IMU">
+            <field type="uint64_t" name="time_boot_us">Measurement timestamp as microseconds since boot</field>
+            <field type="float" name="xacc">Acceleration along X axis</field>
+            <field type="float" name="yacc">Acceleration along Y axis</field>
+            <field type="float" name="zacc">Acceleration along Z axis</field>
+            <field type="float" name="xgyro">Angular speed around X axis</field>
+            <field type="float" name="ygyro">Angular speed around Y axis</field>
+            <field type="float" name="zgyro">Angular speed around Z axis</field>
+            <field type="float" name="temperature">Internal temperature measurement</field>
+            <field type="uint8_t" name="image">True if there is an image associated with this measurement</field>
+        </message>
+        <message id="186" name="NAMED_COMMAND_STRUCT">
+          <field type="char[10]" name="name">Name of the command struct</field>
+          <field type="uint8_t" name="type" enum="OFFBOARD_CONTROL_MODE">Type of command struct</field>
+          <field type="uint8_t" name="ignore" enum="OFFBOARD_CONTROL_IGNORE">Type of command struct</field>
+          <field type="float" name="x">x value in the command struct</field>
+          <field type="float" name="y">y value in the command struct</field>
+          <field type="float" name="z">z value in the command struct</field>
+          <field type="float" name="F">F value in the command struct</field>
+        </message>
+       <message id="187" name="SMALL_RANGE">
+          <field type="uint8_t" name="type" enum="ROSFLIGHT_RANGE_TYPE">Sensor type</field>
+          <field type="float" name="range">Range Measurement (m)</field>
+          <field type="float" name="max_range">Max Range (m)</field>
+          <field type="float" name="min_range">Min Range (m)</field>
+       </message>
+       <message id="188" name="ROSFLIGHT_CMD">
+         <field type="uint8_t" name="command" enum="ROSFLIGHT_CMD"/>
+       </message>
+       <message id="189" name="ROSFLIGHT_CMD_ACK">
+         <field type="uint8_t" name="command" enum="ROSFLIGHT_CMD"/>
+         <field type="uint8_t" name="success" enum="ROSFLIGHT_CMD_RESPONSE"/>
+       </message>
+       <message id="190" name="ROSFLIGHT_OUTPUT_RAW">
+         <field type="uint64_t" name="stamp"/>
+         <field type="float[8]" name="values"/>
+       </message>
+       <message id="191" name="ROSFLIGHT_STATUS">
+        <field type="uint8_t" name="armed"/>
+        <field type="uint8_t" name="failsafe"/>
+        <field type="uint8_t" name="rc_override"/>
+        <field type="uint8_t" name="offboard"/>
+        <field type="uint8_t" name="error_code" enum="ROSFLIGHT_ERROR_CODE"/>
+        <field type="uint8_t" name="control_mode" enum="OFFBOARD_CONTROL_MODE"/>
+        <field type="int16_t" name="num_errors"/>
+        <field type="int16_t" name="loop_time_us"/>
+      </message>
+      <message id="192" name="ROSFLIGHT_VERSION">
+        <field type="char[50]" name="version"/>
+      </message>
+    </messages>
+</mavlink>
