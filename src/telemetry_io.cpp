@@ -724,7 +724,6 @@ void telemetryIO::handle_mav_current_path_msg(const mavlink_message_t &msg)
 
   // fill out the ROS Current_Path message
   rosplane_msgs::Current_Path current_path_msg;
-  current_path_msg.header.stamp = ros::Time::now();
   if (current_path.flag == 1)
   {
     current_path_msg.flag = true;
@@ -761,11 +760,10 @@ void telemetryIO::handle_mav_waypoint_msg(const mavlink_message_t &msg)
 
   // fill out the ROS Waypoint message
   rosplane_msgs::Waypoint waypoint_msg;
-  waypoint_msg.header.stamp = ros::Time::now();
   waypoint_msg.w[0] = waypoint[0];
   waypoint_msg.w[1] = waypoint[1];
   waypoint_msg.w[2] = waypoint[2];
-  waypoint_msg.chi_d = Waypoint.chi_d;
+  waypoint_msg.chi_d = waypoint.chi_d;
   if (waypoint.chi_valid == 1)
   {
      waypoint_msg.chi_valid = true;
@@ -774,7 +772,7 @@ void telemetryIO::handle_mav_waypoint_msg(const mavlink_message_t &msg)
   {
     waypoint_msg.chi_valid = false;
   }
-  waypoint_msg.Va_d = waypoint.Va_d
+  waypoint_msg.Va_d = waypoint.Va_d;
   if (waypoint.set_current == 1)
   {
      waypoint_msg.set_current = true;
