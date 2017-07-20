@@ -19,6 +19,7 @@
 
   <depend>roscpp</depend>
   <depend>rosflight_msgs</depend>
+  <depend>rosplane_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
