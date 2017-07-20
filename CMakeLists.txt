@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   geometry_msgs
   rosflight_msgs
+  rosplane_msgs
   sensor_msgs
   std_msgs
   std_srvs
@@ -35,7 +36,7 @@ endif()
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES mavtelemetry
-  CATKIN_DEPENDS roscpp geometry_msgs rosflight_msgs sensor_msgs std_msgs
+  CATKIN_DEPENDS roscpp geometry_msgs rosflight_msgs rosplane_msgs sensor_msgs std_msgs
   DEPENDS Boost EIGEN3 YAML_CPP
 )
 
