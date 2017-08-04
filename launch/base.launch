@@ -1,0 +1,11 @@
+<launch>
+  
+	<node name="telem_io_remote" pkg="telemetry" type="telemetry_io" output="screen">
+		<param name="port" value="/dev/ttyUSB0"/>
+	</node>
+
+	<node name="telem_io_ground" pkg="telemetry" type="telemetry_io" output="screen">
+		<param name="port" value="/dev/ttyUSB1"/>
+	</node>
+
+</launch>

@@ -1,21 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(telemetry)
 
-# Use this to make Eigen run REALLY fast
-set(CMAKE_CXX_FLAGS "-std=c++0x -O3")
-
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  geometry_msgs
   rosflight_msgs
   rosplane_msgs
-  sensor_msgs
-  std_msgs
-  std_srvs
-  tf
 )
 find_package(Boost REQUIRED COMPONENTS system thread)
-find_package(Eigen3 REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
@@ -36,8 +27,8 @@ endif()
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES mavtelemetry
-  CATKIN_DEPENDS roscpp geometry_msgs rosflight_msgs rosplane_msgs sensor_msgs std_msgs
-  DEPENDS Boost EIGEN3 YAML_CPP
+  CATKIN_DEPENDS roscpp rosflight_msgs rosplane_msgs
+  DEPENDS Boost YAML_CPP
 )
 
 ###########
@@ -48,7 +39,6 @@ include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIRS}
   ${YAML_CPP_INCLUDEDIR}
 )
 
@@ -56,10 +46,6 @@ include_directories(
 add_library(mavtelemetry
   src/mavtelemetry/mavtelemetry.cpp
   src/mavtelemetry/mavlink_serial.cpp
-  src/mavtelemetry/param_manager.cpp
-  src/mavtelemetry/param.cpp
-  src/mavtelemetry/time_manager.cpp
-  src/mavtelemetry/sensors/imu.cpp
 )
 add_dependencies(mavtelemetry ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(mavtelemetry
