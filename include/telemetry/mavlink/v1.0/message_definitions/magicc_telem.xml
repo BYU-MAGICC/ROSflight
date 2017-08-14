@@ -1,22 +1,6 @@
 <?xml version="1.0"?>
 <mavlink>
   <include>common.xml</include>
-  <enums>
-    <!--%%%%%%%%%%%%%%%%<enum name="rosplane_ALT_ZONE_COMMAND">
-      <entry value="0" name="ZONE_TAKE_OFF"/>
-      <entry value="1" name="ZONE_CLIMB"/>
-      <entry value="2" name="ZONE_DESCEND"/>
-      <entry value="3" name="ZONE_ALTITUDE_HOLD"/>
-    </enum>
-    <enum name="rosplane_PATH_TYPES">
-      <entry value="0" name="ORBIT_PATH"/>
-      <entry value="1" name="LINE_PATH"/>
-    </enum>
-    <enum name="rosplane_ORBIT_DIRECTION">
-      <entry value="-1" name="COUNT_CLOCKWISE"/>
-      <entry value="1" name="CLOCKWISE"/>
-    </enum>-->
-  </enums>
   <messages>
     <!-- abreviated State message for Mavlink -->
     <message id="200" name="MAV_STATE_SMALL">
@@ -33,7 +17,7 @@
 
     <!-- MAV Current Path message for Mavlink -->
     <message id="201" name="MAV_CURRENT_PATH">
-      <field type="uint8_t" name="flag">Indicates strait line or orbital path (1 = line, 0 = orbit)</field>
+      <field type="uint8_t" name="path_type">Indicates strait line or orbital path (1 = line, 0 = orbit)</field>
       <field type="float" name="Va_d">Desired airspeed (m/s)</field>
       <field type="float[3]" name="r">Vector to origin of straight line path (m)</field>
       <field type="float[3]" name="q">Unit vector, desired direction of travel for line path</field>
@@ -49,6 +33,7 @@
       <field type="uint8_t" name="chi_valid">Desired course valid (1 = valid, 0 = !valid)</field>
       <field type="float" name="Va_d">Desired airspeed (m/s)</field>
       <field type="uint8_t" name="set_current">Sets this waypoint to be executed now (1 = true, 0 = false)</field>
+      <field type="uint8_t" name="clear_wp_list">Removes all waypoints and returns to origin. The rest of this message will be ignored.</field>
     </message>
 
     <!-- RC Raw message for Mavlink -->

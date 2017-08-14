@@ -11,15 +11,6 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
 
-## Look for and clone MAVLINK if it is missing
-if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include/telemetry/mavlink/v1.0/.git")
-  message(STATUS "MAVLink submodule not found at ${CMAKE_CURRENT_SOURCE_DIR}/include/telemetry/mavlink/v1.0")
-  execute_process(
-    COMMAND git submodule update --init --recursive
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  )
-endif()
-
 ###################################
 ## catkin specific configuration ##
 ###################################

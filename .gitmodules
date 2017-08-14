@@ -1,3 +1,0 @@
-[submodule "telemetry/include/mavlink/v1.0"]
-	path = telemetry/include/telemetry/mavlink/v1.0
-	url = https://github.com/telemetry/mavlink_c_library.git

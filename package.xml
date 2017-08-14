@@ -1,33 +1,25 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>telemetry</name>
-  <version>0.1.3</version>
-  <description>Package for interfacing to the telemetry autopilot firmware over MAVLink</description>
+  <version>0.0.0</version>
+  <description>Package for interfacing select ROSflight and ROSplane messages over MAVLink</description>
 
-  <maintainer email="daniel.p.koch@gmail.com">Daniel Koch</maintainer>
+  <maintainer email="TODO@TODO.com">TODO</maintainer>
 
   <author email="daniel.p.koch@gmail.com">Daniel Koch</author>
   <author email="superjax08@gmail.com">James Jackson</author>
 
-  <license>BSD</license>
+  <license>TODO</license>
 
-  <url type="website">http://telemetry.org</url>
-  <url type="repository">https://github.com/telemetry/telemetry</url>
-  <url type="bugtracker">https://github.com/telemetry/telemetry/issues</url>
+  <url type="repository">TODO</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>roscpp</depend>
   <depend>rosflight_msgs</depend>
   <depend>rosplane_msgs</depend>
-  <depend>geometry_msgs</depend>
-  <depend>sensor_msgs</depend>
-  <depend>std_msgs</depend>
-  <depend>std_srvs</depend>
-  <depend>tf</depend>
 
   <depend>boost</depend>
-  <depend>eigen</depend>
   <depend>yaml-cpp</depend>
 
   <build_depend>git</build_depend>

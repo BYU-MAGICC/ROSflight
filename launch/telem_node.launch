@@ -1,0 +1,9 @@
+<launch>
+
+  <arg name="port" default="/dev/ttyUSB0"/>
+
+	<node name="telem_io_node" pkg="telemetry" type="telemetry_io" output="screen">
+		<param name="port" value="$(arg port)"/>
+	</node>
+
+</launch>

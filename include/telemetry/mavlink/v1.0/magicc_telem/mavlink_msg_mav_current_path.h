@@ -9,15 +9,15 @@ typedef struct __mavlink_mav_current_path_t
  float q[3]; /*< Unit vector, desired direction of travel for line path*/
  float c[3]; /*< Center of orbital path (m)*/
  float rho; /*< Radius of orbital path (m)*/
- uint8_t flag; /*< Indicates strait line or orbital path (1 = line, 0 = orbit)*/
+ uint8_t path_type; /*< Indicates strait line or orbital path (1 = line, 0 = orbit)*/
  int8_t lambda; /*< Direction of orbital path (clockwise is 1, counterclockwise is -1)*/
 } mavlink_mav_current_path_t;
 
 #define MAVLINK_MSG_ID_MAV_CURRENT_PATH_LEN 46
 #define MAVLINK_MSG_ID_201_LEN 46
 
-#define MAVLINK_MSG_ID_MAV_CURRENT_PATH_CRC 218
-#define MAVLINK_MSG_ID_201_CRC 218
+#define MAVLINK_MSG_ID_MAV_CURRENT_PATH_CRC 105
+#define MAVLINK_MSG_ID_201_CRC 105
 
 #define MAVLINK_MSG_MAV_CURRENT_PATH_FIELD_R_LEN 3
 #define MAVLINK_MSG_MAV_CURRENT_PATH_FIELD_Q_LEN 3
@@ -31,7 +31,7 @@ typedef struct __mavlink_mav_current_path_t
          { "q", NULL, MAVLINK_TYPE_FLOAT, 3, 16, offsetof(mavlink_mav_current_path_t, q) }, \
          { "c", NULL, MAVLINK_TYPE_FLOAT, 3, 28, offsetof(mavlink_mav_current_path_t, c) }, \
          { "rho", NULL, MAVLINK_TYPE_FLOAT, 0, 40, offsetof(mavlink_mav_current_path_t, rho) }, \
-         { "flag", NULL, MAVLINK_TYPE_UINT8_T, 0, 44, offsetof(mavlink_mav_current_path_t, flag) }, \
+         { "path_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 44, offsetof(mavlink_mav_current_path_t, path_type) }, \
          { "lambda", NULL, MAVLINK_TYPE_INT8_T, 0, 45, offsetof(mavlink_mav_current_path_t, lambda) }, \
          } \
 }
@@ -43,7 +43,7 @@ typedef struct __mavlink_mav_current_path_t
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param msg The MAVLink message to compress the data into
  *
- * @param flag Indicates strait line or orbital path (1 = line, 0 = orbit)
+ * @param path_type Indicates strait line or orbital path (1 = line, 0 = orbit)
  * @param Va_d Desired airspeed (m/s)
  * @param r Vector to origin of straight line path (m)
  * @param q Unit vector, desired direction of travel for line path
@@ -53,13 +53,13 @@ typedef struct __mavlink_mav_current_path_t
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_mav_current_path_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       uint8_t flag, float Va_d, const float *r, const float *q, const float *c, float rho, int8_t lambda)
+						       uint8_t path_type, float Va_d, const float *r, const float *q, const float *c, float rho, int8_t lambda)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_MAV_CURRENT_PATH_LEN];
 	_mav_put_float(buf, 0, Va_d);
 	_mav_put_float(buf, 40, rho);
-	_mav_put_uint8_t(buf, 44, flag);
+	_mav_put_uint8_t(buf, 44, path_type);
 	_mav_put_int8_t(buf, 45, lambda);
 	_mav_put_float_array(buf, 4, r, 3);
 	_mav_put_float_array(buf, 16, q, 3);
@@ -69,7 +69,7 @@ static inline uint16_t mavlink_msg_mav_current_path_pack(uint8_t system_id, uint
 	mavlink_mav_current_path_t packet;
 	packet.Va_d = Va_d;
 	packet.rho = rho;
-	packet.flag = flag;
+	packet.path_type = path_type;
 	packet.lambda = lambda;
 	mav_array_memcpy(packet.r, r, sizeof(float)*3);
 	mav_array_memcpy(packet.q, q, sizeof(float)*3);
@@ -91,7 +91,7 @@ static inline uint16_t mavlink_msg_mav_current_path_pack(uint8_t system_id, uint
  * @param component_id ID of this component (e.g. 200 for IMU)
  * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
- * @param flag Indicates strait line or orbital path (1 = line, 0 = orbit)
+ * @param path_type Indicates strait line or orbital path (1 = line, 0 = orbit)
  * @param Va_d Desired airspeed (m/s)
  * @param r Vector to origin of straight line path (m)
  * @param q Unit vector, desired direction of travel for line path
@@ -102,13 +102,13 @@ static inline uint16_t mavlink_msg_mav_current_path_pack(uint8_t system_id, uint
  */
 static inline uint16_t mavlink_msg_mav_current_path_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           uint8_t flag,float Va_d,const float *r,const float *q,const float *c,float rho,int8_t lambda)
+						           uint8_t path_type,float Va_d,const float *r,const float *q,const float *c,float rho,int8_t lambda)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_MAV_CURRENT_PATH_LEN];
 	_mav_put_float(buf, 0, Va_d);
 	_mav_put_float(buf, 40, rho);
-	_mav_put_uint8_t(buf, 44, flag);
+	_mav_put_uint8_t(buf, 44, path_type);
 	_mav_put_int8_t(buf, 45, lambda);
 	_mav_put_float_array(buf, 4, r, 3);
 	_mav_put_float_array(buf, 16, q, 3);
@@ -118,7 +118,7 @@ static inline uint16_t mavlink_msg_mav_current_path_pack_chan(uint8_t system_id,
 	mavlink_mav_current_path_t packet;
 	packet.Va_d = Va_d;
 	packet.rho = rho;
-	packet.flag = flag;
+	packet.path_type = path_type;
 	packet.lambda = lambda;
 	mav_array_memcpy(packet.r, r, sizeof(float)*3);
 	mav_array_memcpy(packet.q, q, sizeof(float)*3);
@@ -144,7 +144,7 @@ static inline uint16_t mavlink_msg_mav_current_path_pack_chan(uint8_t system_id,
  */
 static inline uint16_t mavlink_msg_mav_current_path_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_mav_current_path_t* mav_current_path)
 {
-	return mavlink_msg_mav_current_path_pack(system_id, component_id, msg, mav_current_path->flag, mav_current_path->Va_d, mav_current_path->r, mav_current_path->q, mav_current_path->c, mav_current_path->rho, mav_current_path->lambda);
+	return mavlink_msg_mav_current_path_pack(system_id, component_id, msg, mav_current_path->path_type, mav_current_path->Va_d, mav_current_path->r, mav_current_path->q, mav_current_path->c, mav_current_path->rho, mav_current_path->lambda);
 }
 
 /**
@@ -158,14 +158,14 @@ static inline uint16_t mavlink_msg_mav_current_path_encode(uint8_t system_id, ui
  */
 static inline uint16_t mavlink_msg_mav_current_path_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_mav_current_path_t* mav_current_path)
 {
-	return mavlink_msg_mav_current_path_pack_chan(system_id, component_id, chan, msg, mav_current_path->flag, mav_current_path->Va_d, mav_current_path->r, mav_current_path->q, mav_current_path->c, mav_current_path->rho, mav_current_path->lambda);
+	return mavlink_msg_mav_current_path_pack_chan(system_id, component_id, chan, msg, mav_current_path->path_type, mav_current_path->Va_d, mav_current_path->r, mav_current_path->q, mav_current_path->c, mav_current_path->rho, mav_current_path->lambda);
 }
 
 /**
  * @brief Send a mav_current_path message
  * @param chan MAVLink channel to send the message
  *
- * @param flag Indicates strait line or orbital path (1 = line, 0 = orbit)
+ * @param path_type Indicates strait line or orbital path (1 = line, 0 = orbit)
  * @param Va_d Desired airspeed (m/s)
  * @param r Vector to origin of straight line path (m)
  * @param q Unit vector, desired direction of travel for line path
@@ -175,13 +175,13 @@ static inline uint16_t mavlink_msg_mav_current_path_encode_chan(uint8_t system_i
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_mav_current_path_send(mavlink_channel_t chan, uint8_t flag, float Va_d, const float *r, const float *q, const float *c, float rho, int8_t lambda)
+static inline void mavlink_msg_mav_current_path_send(mavlink_channel_t chan, uint8_t path_type, float Va_d, const float *r, const float *q, const float *c, float rho, int8_t lambda)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_MAV_CURRENT_PATH_LEN];
 	_mav_put_float(buf, 0, Va_d);
 	_mav_put_float(buf, 40, rho);
-	_mav_put_uint8_t(buf, 44, flag);
+	_mav_put_uint8_t(buf, 44, path_type);
 	_mav_put_int8_t(buf, 45, lambda);
 	_mav_put_float_array(buf, 4, r, 3);
 	_mav_put_float_array(buf, 16, q, 3);
@@ -195,7 +195,7 @@ static inline void mavlink_msg_mav_current_path_send(mavlink_channel_t chan, uin
 	mavlink_mav_current_path_t packet;
 	packet.Va_d = Va_d;
 	packet.rho = rho;
-	packet.flag = flag;
+	packet.path_type = path_type;
 	packet.lambda = lambda;
 	mav_array_memcpy(packet.r, r, sizeof(float)*3);
 	mav_array_memcpy(packet.q, q, sizeof(float)*3);
@@ -216,13 +216,13 @@ static inline void mavlink_msg_mav_current_path_send(mavlink_channel_t chan, uin
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_mav_current_path_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint8_t flag, float Va_d, const float *r, const float *q, const float *c, float rho, int8_t lambda)
+static inline void mavlink_msg_mav_current_path_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint8_t path_type, float Va_d, const float *r, const float *q, const float *c, float rho, int8_t lambda)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char *buf = (char *)msgbuf;
 	_mav_put_float(buf, 0, Va_d);
 	_mav_put_float(buf, 40, rho);
-	_mav_put_uint8_t(buf, 44, flag);
+	_mav_put_uint8_t(buf, 44, path_type);
 	_mav_put_int8_t(buf, 45, lambda);
 	_mav_put_float_array(buf, 4, r, 3);
 	_mav_put_float_array(buf, 16, q, 3);
@@ -236,7 +236,7 @@ static inline void mavlink_msg_mav_current_path_send_buf(mavlink_message_t *msgb
 	mavlink_mav_current_path_t *packet = (mavlink_mav_current_path_t *)msgbuf;
 	packet->Va_d = Va_d;
 	packet->rho = rho;
-	packet->flag = flag;
+	packet->path_type = path_type;
 	packet->lambda = lambda;
 	mav_array_memcpy(packet->r, r, sizeof(float)*3);
 	mav_array_memcpy(packet->q, q, sizeof(float)*3);
@@ -256,11 +256,11 @@ static inline void mavlink_msg_mav_current_path_send_buf(mavlink_message_t *msgb
 
 
 /**
- * @brief Get field flag from mav_current_path message
+ * @brief Get field path_type from mav_current_path message
  *
  * @return Indicates strait line or orbital path (1 = line, 0 = orbit)
  */
-static inline uint8_t mavlink_msg_mav_current_path_get_flag(const mavlink_message_t* msg)
+static inline uint8_t mavlink_msg_mav_current_path_get_path_type(const mavlink_message_t* msg)
 {
 	return _MAV_RETURN_uint8_t(msg,  44);
 }
@@ -339,7 +339,7 @@ static inline void mavlink_msg_mav_current_path_decode(const mavlink_message_t* 
 	mavlink_msg_mav_current_path_get_q(msg, mav_current_path->q);
 	mavlink_msg_mav_current_path_get_c(msg, mav_current_path->c);
 	mav_current_path->rho = mavlink_msg_mav_current_path_get_rho(msg);
-	mav_current_path->flag = mavlink_msg_mav_current_path_get_flag(msg);
+	mav_current_path->path_type = mavlink_msg_mav_current_path_get_path_type(msg);
 	mav_current_path->lambda = mavlink_msg_mav_current_path_get_lambda(msg);
 #else
 	memcpy(mav_current_path, _MAV_PAYLOAD(msg), MAVLINK_MSG_ID_MAV_CURRENT_PATH_LEN);

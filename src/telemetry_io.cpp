@@ -167,17 +167,9 @@ void telemetryIO::handle_mav_current_path_msg(const mavlink_message_t &msg)
   mavlink_msg_mav_current_path_decode(&msg, &current_path);
 
   // fill out the ROS Current_Path message
-  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   rosplane_msgs::Current_Path current_path_msg;
-  //current_path_msg.path_type = current_path.path_type;
-  if (current_path.flag == 1)
-  {
-    current_path_msg.flag = true;
-  }
-  else
-  {
-    current_path_msg.flag = false;
-  }
+  current_path_msg.path_type = current_path.path_type;
+
   current_path_msg.Va_d = current_path.Va_d;
   current_path_msg.r[0] = current_path.r[0];
   current_path_msg.r[1] = current_path.r[1];
@@ -226,6 +218,14 @@ void telemetryIO::handle_mav_waypoint_msg(const mavlink_message_t &msg)
   else
   {
     waypoint_msg.set_current = false;
+  }
+  if (waypoint.clear_wp_list == 1)
+  {
+    waypoint_msg.clear_wp_list = true;
+  }
+  else
+  {
+    waypoint_msg.clear_wp_list = false;
   }
 
   // publish the message
@@ -370,23 +370,14 @@ void telemetryIO::stateCallback(rosplane_msgs::State::ConstPtr msg)
   float initial_alt = msg->initial_alt;
 
   mavlink_message_t mavlink_msg;
-  mavlink_msg_mav_state_small_pack(1, 50, &mavlink_msg, position, Va, phi, theta, psi, chi, initial_lat, initial_lon, initial_alt);
+  mavlink_msg_mav_state_small_pack(1, 250, &mavlink_msg, position, Va, phi, theta, psi, chi, initial_lat, initial_lon, initial_alt);
   mavtelemetry_->serial.send_message(mavlink_msg);
 }
 
 void telemetryIO::currentPathCallback(rosplane_msgs::Current_Path::ConstPtr msg)
 {
-  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  //uint8_t path_type = msg.path_type;
-  uint8_t flag;
-  if (msg->flag)
-  {
-    flag = 1;
-  }
-  else
-  {
-    flag = 0;
-  }
+  uint8_t path_type = msg->path_type;
+
   float Va_d = msg->Va_d;
   float r[3];
   r[0] = msg->r[0];
@@ -404,8 +395,7 @@ void telemetryIO::currentPathCallback(rosplane_msgs::Current_Path::ConstPtr msg)
   int8_t lambda = msg->lambda;
 
   mavlink_message_t mavlink_msg;
-  // %%%%%%%%%%%%%%% replace flag with path_type %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  mavlink_msg_mav_current_path_pack(1, 50, &mavlink_msg, flag, Va_d, r, q, c, rho, lambda);
+  mavlink_msg_mav_current_path_pack(1, 250, &mavlink_msg, path_type, Va_d, r, q, c, rho, lambda);
   mavtelemetry_->serial.send_message(mavlink_msg);
 }
 
@@ -435,9 +425,18 @@ void telemetryIO::waypointCallback(rosplane_msgs::Waypoint::ConstPtr msg)
   {
     set_current = 0;
   }
+  uint8_t clear_wp_list;
+  if (msg->clear_wp_list)
+  {
+    clear_wp_list = 1;
+  }
+  else
+  {
+    clear_wp_list = 0;
+  }
 
   mavlink_message_t mavlink_msg;
-  mavlink_msg_mav_waypoint_pack(1, 50, &mavlink_msg, w, chi_d, chi_valid, Va_d, set_current);
+  mavlink_msg_mav_waypoint_pack(1, 250, &mavlink_msg, w, chi_d, chi_valid, Va_d, set_current, clear_wp_list);
   mavtelemetry_->serial.send_message(mavlink_msg);
 }
 
@@ -450,7 +449,7 @@ void telemetryIO::rcRawCallback(rosflight_msgs::RCRaw::ConstPtr msg)
   }
 
   mavlink_message_t mavlink_msg;
-  mavlink_msg_rc_raw_pack(1, 50, &mavlink_msg, values);
+  mavlink_msg_rc_raw_pack(1, 250, &mavlink_msg, values);
   mavtelemetry_->serial.send_message(mavlink_msg);
 }
 
@@ -474,7 +473,7 @@ void telemetryIO::gpsDataCallback(rosflight_msgs::GPS::ConstPtr msg)
   float covariance = msg->covariance;
 
   mavlink_message_t mavlink_msg;
-  mavlink_msg_gps_data_pack(1, 50, &mavlink_msg, fix, NumSat, latitude, longitude, altitude, speed, ground_course, covariance);
+  mavlink_msg_gps_data_pack(1, 250, &mavlink_msg, fix, NumSat, latitude, longitude, altitude, speed, ground_course, covariance);
   mavtelemetry_->serial.send_message(mavlink_msg);
 }
 
@@ -499,7 +498,7 @@ void telemetryIO::controllerInternalsCallback(rosplane_msgs::Controller_Internal
   }
 
   mavlink_message_t mavlink_msg;
-  mavlink_msg_mav_controller_internals_pack(1, 50, &mavlink_msg, theta_c, phi_c, alt_zone, aux, aux_valid);
+  mavlink_msg_mav_controller_internals_pack(1, 250, &mavlink_msg, theta_c, phi_c, alt_zone, aux, aux_valid);
   mavtelemetry_->serial.send_message(mavlink_msg);
 }
 
@@ -525,7 +524,7 @@ void telemetryIO::controllerCommandsCallback(rosplane_msgs::Controller_Commands:
   }
 
   mavlink_message_t mavlink_msg;
-  mavlink_msg_mav_controller_commands_pack(1, 50, &mavlink_msg, Va_c, h_c, chi_c, phi_ff, aux, aux_valid);
+  mavlink_msg_mav_controller_commands_pack(1, 250, &mavlink_msg, Va_c, h_c, chi_c, phi_ff, aux, aux_valid);
   mavtelemetry_->serial.send_message(mavlink_msg);
 }
 
