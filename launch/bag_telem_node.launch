@@ -1,0 +1,14 @@
+<launch>
+
+  <arg name="port" default="/dev/ttyUSB0"/>
+  <arg name="bag_name" default="flight"/>
+
+  <arg name="bag_path" default="$(find telemetry)/../bags"/>
+
+	<node name="telem_io_node" pkg="telemetry" type="telemetry_io" output="screen">
+		<param name="port" value="$(arg port)"/>
+	</node>
+
+  <node pkg="rosbag" type="play" name="player" output="screen" args="-q --clock $(arg bag_path)/$(arg bag_name).bag"/>
+
+</launch>
