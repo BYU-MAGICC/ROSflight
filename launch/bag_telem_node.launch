@@ -3,7 +3,7 @@
   <arg name="port" default="/dev/ttyUSB0"/>
   <arg name="bag_name" default="flight"/>
 
-  <arg name="bag_path" default="$(find telemetry)/../bags"/>
+  <arg name="bag_path" default="$(find telemetry)/../../bags"/>
 
 	<node name="telem_io_node" pkg="telemetry" type="telemetry_io" output="screen">
 		<param name="port" value="$(arg port)"/>
