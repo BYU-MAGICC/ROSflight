@@ -5,9 +5,33 @@
 
   <arg name="bag_path" default="$(find telemetry)/../../bags"/>
 
-	<node name="telem_io_node" pkg="telemetry" type="telemetry_io" output="screen">
-		<param name="port" value="$(arg port)"/>
-	</node>
+  <!-- topic rates must be from 1-10 hz in order for mavlink to function well at the current baud rate -->
+  <arg name="state_rate" default="10"/>
+  <arg name="current_path_rate" default="2"/>
+  <arg name="waypoint_rate" default="1"/>
+  <arg name="rc_raw_rate" default="1"/>
+  <arg name="gps_data_rate" default="1"/>
+  <arg name="controller_inners_rate" default="10"/>
+  <arg name="controller_commands_rate" default="10"/>
+
+  <node name="state_throttler" type="throttle" pkg="topic_tools" args="messages /state $(arg state_rate) /state_throttled"/>
+  <node name="current_path_throttler" type="throttle" pkg="topic_tools" args="messages /current_path $(arg current_path_rate) /current_path_throttled"/>
+  <node name="waypoint_throttler" type="throttle" pkg="topic_tools" args="messages /waypoints $(arg waypoint_rate) /waypoints_throttled"/>
+  <node name="rc_raw_throttler" type="throttle" pkg="topic_tools" args="messages /rc_raw $(arg rc_raw_rate) /rc_raw_throttled"/>
+  <node name="gps_data_throttler" type="throttle" pkg="topic_tools" args="messages /gps/data $(arg gps_data_rate) /gps/data_throttled"/>
+  <node name="controller_inners_throttler" type="throttle" pkg="topic_tools" args="messages /controller_inners $(arg controller_inners_rate) /controller_inners_throttled"/>
+  <node name="controller_commands_throttler" type="throttle" pkg="topic_tools" args="messages /controller_commands $(arg controller_commands_rate) /controller_commands_throttled"/>
+
+  <node name="telem_io_node" pkg="telemetry" type="telemetry_io" output="screen">
+    <param name="port" value="$(arg port)"/>
+    <remap from="state" to="state_throttled"/>
+    <remap from="current_path" to="current_path_throttled"/>
+    <remap from="waypoints" to="waypoints_throttled"/>
+    <remap from="rc_raw" to="rc_raw_throttled"/>
+    <remap from="gps/data" to="gps/data_throttled"/>
+    <remap from="controller_inners" to="controller_inners_throttled"/>
+    <remap from="controller_commands" to="controller_commands_throttled"/>
+  </node>
 
   <node pkg="rosbag" type="play" name="player" output="screen" args="-q --clock $(arg bag_path)/$(arg bag_name).bag"/>
 
