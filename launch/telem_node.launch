@@ -1,9 +1,41 @@
 <launch>
 
   <arg name="port" default="/dev/ttyUSB0"/>
+  <!-- topic rates must be from 1-10 hz in order for mavlink to function well at the current baud rate -->
+  <arg name="state_topic" default="state"/>
+  <arg name="state_rate" default="10"/>
+  <arg name="current_path_topic" default="current_path"/>
+  <arg name="current_path_rate" default="2"/>
+  <arg name="waypoint_topic" default="waypoints"/>
+  <arg name="waypoint_rate" default="1"/>
+  <arg name="rc_raw_topic" default="rc_raw"/>
+  <arg name="rc_raw_rate" default="1"/>
+  <arg name="gps_data_topic" default="gps/data"/>
+  <arg name="gps_data_rate" default="1"/>
+  <arg name="controller_inners_topic" default="controller_iners"/>
+  <arg name="controller_inners_rate" default="10"/>
+  <arg name="controller_commands_topic" default="controller_commands"/>
+  <arg name="controller_commands_rate" default="10"/>
 
-	<node name="telem_io_node" pkg="telemetry" type="telemetry_io" output="screen">
-		<param name="port" value="$(arg port)"/>
-	</node>
+  <!-- throttle incoming topics to avoid overwhelming the serial writer -->
+  <node name="state_throttler" type="throttle" pkg="topic_tools" args="messages $(arg state_topic) $(arg state_rate) $(arg state_topic)_throttled"/>
+  <node name="current_path_throttler" type="throttle" pkg="topic_tools" args="messages $(arg current_path_topic) $(arg current_path_rate) $(arg current_path_topic)_throttled"/>
+  <node name="waypoint_throttler" type="throttle" pkg="topic_tools" args="messages $(arg waypoint_topic) $(arg waypoint_rate) $(arg waypoint_topic)_throttled"/>
+  <node name="rc_raw_throttler" type="throttle" pkg="topic_tools" args="messages $(arg rc_raw_topic) $(arg rc_raw_rate) $(arg rc_raw_topic)_throttled"/>
+  <node name="gps_data_throttler" type="throttle" pkg="topic_tools" args="messages $(arg gps_data_topic) $(arg gps_data_rate) $(arg gps_data_topic)_throttled"/>
+  <node name="controller_inners_throttler" type="throttle" pkg="topic_tools" args="messages $(arg controller_inners_topic) $(arg controller_inners_rate) $(arg controller_inners_topic)_throttled"/>
+  <node name="controller_commands_throttler" type="throttle" pkg="topic_tools" args="messages $(arg controller_commands_topic) $(arg controller_commands_rate) $(arg controller_commands_topic)_throttled"/>
+
+  <!-- launch telemetry node with remapped topics -->
+  <node name="telem_io_node" pkg="telemetry" type="telemetry_io" output="screen">
+    <param name="port" value="$(arg port)"/>
+    <remap from="state" to="$(arg state_topic)_throttled"/>
+    <remap from="current_path" to="$(arg current_path_topic)_throttled"/>
+    <remap from="waypoints" to="$(arg waypoint_topic)_throttled"/>
+    <remap from="rc_raw" to="$(arg rc_raw_topic)_throttled"/>
+    <remap from="gps/data" to="$(arg gps_data_topic)_throttled"/>
+    <remap from="controller_inners" to="$(arg controller_inners_topic)_throttled"/>
+    <remap from="controller_commands" to="$(arg controller_commands_topic)_throttled"/>
+  </node>
 
 </launch>
